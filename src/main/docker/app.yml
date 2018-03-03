@@ -1,0 +1,24 @@
+# docker kill $(docker ps -q)
+# docker-compose -f src/main/docker/app.yml up -d
+version: '2'
+services:
+    app:
+      # docker exec -i -t docker_app_1 bin/sh
+      # netstat -tulpn
+      image: chomatdam/sampleapp
+      environment:
+          - SPRING_PROFILES_ACTIVE=prod
+          - APP_SLEEP=10
+      ports:
+          - 8080:8080
+      links:
+        - rabbit
+        - mongodb
+    mongodb:
+      extends:
+          file: mongodb.yml
+          service: mongodb
+    rabbit:
+      extends:
+        file: rabbit.yml
+        service: rabbit

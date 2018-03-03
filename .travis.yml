@@ -1,0 +1,75 @@
+# Please make sure to define AWS and DOCKER HUB credentials
+language: java
+
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+  - master
+
+env:
+  global:
+    - IMAGE_NAME=chomatdam/sampleapp
+    - TERRAFORM_VERSION=0.11.3
+
+services:
+  - docker
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+before_install:
+  # Wrapper
+  - gradle wrapper
+  # ECS
+  - sudo curl -o /usr/local/bin/ecs-cli https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest
+  - sudo chmod +x /usr/local/bin/ecs-cli
+  # Terraform
+  - curl -fSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o terraform.zip
+  - sudo unzip terraform.zip -d /opt/terraform
+  - sudo ln -s /opt/terraform/terraform /usr/bin/terraform
+  - rm -f terraform.zip
+
+script:
+    - ./gradlew test
+    - ./gradlew bootJar
+    # Build and push docker image
+    - docker build -t ${IMAGE_NAME} -f - . < ./src/main/docker/Dockerfile
+    - echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:latest
+    - docker push ${IMAGE_NAME}:latest
+
+after_success:
+  # Create infrastructure
+  - terraform get src/main/terraform/ecs
+  - terraform init src/main/terraform/ecs
+  - terraform plan src/main/terraform/ecs
+  - terraform apply -auto-approve src/main/terraform/ecs
+  # Deploy services
+  - ecs-cli configure profile --profile-name ecs_profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
+  - ecs-cli configure --cluster test-assignment-services --default-launch-type EC2 --region eu-west-3 --config-name ecs_config_name
+  - ecs-cli compose -f src/main/docker/app.yml -p test-assignment-services up
+
+# ELASTIC BEANSTALK
+#before_deploy:
+#  - zip app.zip build/libs/app.jar -j
+#
+#deploy:
+#  provider: elasticbeanstalk
+#  access_key_id: $AWS_ACCESS_KEY_ID
+#  secret_access_key:
+#    secure: $AWS_SECRET_ACCESS_KEY
+#  region: "eu-west-3"
+#  app: "test-assignment-application"
+#  env: "app-production"
+#  bucket_name: "test-assignment-s3-bucket"
+#  zip_file: 'app.zip'
+#  skip_cleanup: true
+#  on:
+#    branch: master
+
+after_deploy:
+  - echo "done deploying"
