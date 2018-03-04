@@ -1,13 +1,37 @@
+management:
+  endpoint:
+    health:
+      enabled: true
 spring:
   data:
     mongodb:
       host: localhost
       port: 27017
       database: mydb
-management:
-  endpoint:
-    health:
-      enabled: true
+  cloud:
+    stream:
+      binders:
+          rabbit1:
+            type: rabbit
+            environment:
+              spring:
+                rabbitmq:
+                  host: localhost
+                  port: 5672
+                  username: guest
+                  password: guest
+                  virtual-host: /
+      bindings:
+        # channels
+        input:
+          destination: exchangeName
+          group: nonAnonymousConsumerGroup
+        output:
+          destination: exchangeName
+          group: nonAnonymousConsumerGroup
+logging:
+  level:
+    ROOT: info
 ---
 
 spring.profiles: prod

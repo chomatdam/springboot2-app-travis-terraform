@@ -8,9 +8,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}"
         classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"
     }
 }
@@ -45,10 +45,10 @@ repositories {
 
 
 ext {
-    springCloudVersion = 'Finchley.BUILD-SNAPSHOT'
     junitJupiterVersion  = '5.1.0'
     junitPlatformVersion = '1.1.0'
-    jacksonKotlin = '2.9.+'
+    jacksonKotlinVersion = '2.9.+'
+    springCloudStreamVersion = '2.0.0.M4'
 }
 
 bootJar {
@@ -58,29 +58,25 @@ bootJar {
 
 dependencies {
     // Mongo
-    compile('org.springframework.data:spring-data-mongodb')
-    compile('org.mongodb:mongodb-driver-reactivestreams')
+    compile "org.springframework.data:spring-data-mongodb"
+    compile "org.mongodb:mongodb-driver-reactivestreams"
     // SB
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-starter-webflux')
-    compile("org.springframework.boot:spring-boot-devtools")
-    compile('org.springframework.cloud:spring-cloud-stream-reactive')
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-starter-webflux"
+    compile "org.springframework.boot:spring-boot-devtools"
+    // MQ
+    compile "org.springframework.cloud:spring-cloud-stream-reactive:${springCloudStreamVersion}"
+    compile "org.springframework.cloud:spring-cloud-stream-binder-rabbit:${rabbitBinderVersion}"
     // Kotlin
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlin}")
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compile("org.jetbrains.kotlin:kotlin-reflect")
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect"
     // JUnit Jupiter API and TestEngine implementation
-    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     // Tests
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.springframework.cloud:spring-cloud-stream-test-support')
-    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
-    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
+    // Only needed to run tests in an  IntelliJ IDE A that bundles an older version
+    testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 }

@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 
 @Document
-data class Article(@Id val id: String,
+data class Article(@Id val id: Long,
                    val title: String,
                    val description: String,
                    val url: String,

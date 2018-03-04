@@ -23,7 +23,7 @@
 ### Advanced
 * Update your scheduler to publish articles on a message queue
 * Consume these articles and save them to a repository
-    * _if an article is already existing, update only fields: title, description and updatedAt_
+    * _if an article is already existing, set the field: updatedAt_
 * Create a Dockerfile and a docker-compose.yml
 * Add integration tests
 * Create an infrastructure on AWS ([AWS Free Tier](https://aws.amazon.com/free/))
