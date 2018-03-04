@@ -45,10 +45,10 @@ repositories {
 
 
 ext {
+    springCloudVersion = 'Finchley.BUILD-SNAPSHOT'
     junitJupiterVersion  = '5.1.0'
     junitPlatformVersion = '1.1.0'
     jacksonKotlinVersion = '2.9.+'
-    springCloudStreamVersion = '2.0.0.M4'
 }
 
 bootJar {
@@ -65,8 +65,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-webflux"
     compile "org.springframework.boot:spring-boot-devtools"
     // MQ
-    compile "org.springframework.cloud:spring-cloud-stream-reactive:${springCloudStreamVersion}"
-    compile "org.springframework.cloud:spring-cloud-stream-binder-rabbit:${rabbitBinderVersion}"
+    compile "org.springframework.cloud:spring-cloud-stream-reactive"
+    compile "org.springframework.cloud:spring-cloud-stream-binder-rabbit"
     // Kotlin
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -79,4 +79,10 @@ dependencies {
     testCompile "org.springframework.cloud:spring-cloud-stream-test-support"
     // Only needed to run tests in an  IntelliJ IDE A that bundles an older version
     testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }

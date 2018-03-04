@@ -22,7 +22,11 @@ class ArticleService(val articleRepository: ArticleRepository) {
                 articleFlux.zipWith(articleRepository.existsById(it.id))
             }
             .map {
-                it.t1.apply { if (it.t2) it.t1.copy(updatedAt = LocalDateTime.now()) }
+                var article = it.t1
+                if (it.t2) {
+                    article = article.copy(updatedAt = LocalDateTime.now())
+                }
+                article
             }
             .flatMap { articleRepository.save(it) }
             .subscribe(

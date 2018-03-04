@@ -22,6 +22,9 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
+  # Start dependencies for integration tests
+  - docker-compose -f src/main/docker/mongodb.yml up -d
+  - docker-compose -f src/main/docker/rabbit.yml up -d
   # Wrapper
   - gradle wrapper
   # ECS
@@ -46,8 +49,8 @@ after_success:
   # Create infrastructure
   - terraform get src/main/terraform/ecs
   - terraform init src/main/terraform/ecs
-  - terraform plan src/main/terraform/ecs
-  - terraform apply -auto-approve src/main/terraform/ecs
+  - terraform plan -out terraform.tfplan src/main/terraform/ecs
+  - terraform apply -auto-approve terraform.tfplan
   # Deploy services
   - ecs-cli configure profile --profile-name ecs_profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
   - ecs-cli configure --cluster test-assignment-services --default-launch-type EC2 --region eu-west-3 --config-name ecs_config_name

@@ -6,6 +6,7 @@ services:
       # docker exec -i -t docker_app_1 bin/sh
       # netstat -tulpn
       image: chomatdam/sampleapp
+      mem_limit: 2048m
       environment:
           - SPRING_PROFILES_ACTIVE=prod
           - APP_SLEEP=10
