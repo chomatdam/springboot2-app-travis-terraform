@@ -16,7 +16,7 @@ class ArticleConsumer(val articleService: ArticleService) {
 
     @StreamListener
     fun receive(@Input(Sink.INPUT) input: Flux<Article>) {
-        articleService.prepareAndSaveArticle(input)
+        articleService.checkAndSaveArticle(input)
     }
 
 }

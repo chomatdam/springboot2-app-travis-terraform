@@ -16,7 +16,7 @@ class ArticleService(val articleRepository: ArticleRepository) {
     private val log = LoggerFactory.getLogger(ArticleConsumer::class.java)
 
 
-    fun prepareAndSaveArticle(articleFlux: Flux<Article>) {
+    fun checkAndSaveArticle(articleFlux: Flux<Article>) {
         articleFlux
             .flatMap {
                 articleFlux.zipWith(articleRepository.existsById(it.id))

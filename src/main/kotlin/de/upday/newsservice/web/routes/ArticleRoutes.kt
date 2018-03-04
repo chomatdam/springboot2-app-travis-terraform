@@ -1,4 +1,4 @@
-package de.upday.newsservice.config
+package de.upday.newsservice.web.routes
 
 import de.upday.newsservice.handler.ArticleHandler
 import org.springframework.context.annotation.Bean
@@ -9,10 +9,10 @@ import org.springframework.web.reactive.function.server.router
 
 @Configuration
 @EnableWebFlux
-class RestArticleConfig {
+class ArticleRoutes {
 
     @Bean
-    fun routes(articleHandler: ArticleHandler) = router {
+    fun routesVersion1(articleHandler: ArticleHandler) = router {
         "/api/v1".nest {
             accept(MediaType.APPLICATION_JSON).nest {
                 GET("/articles", articleHandler::articles)
